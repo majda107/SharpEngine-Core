@@ -1,4 +1,6 @@
-﻿using System;
+﻿using OpenTK;
+using SharpEngine_Core.GameLib;
+using System;
 
 namespace SharpEngine_Core
 {
@@ -6,7 +8,10 @@ namespace SharpEngine_Core
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            GameWindow gw = new GameWindow(500, 500, new OpenTK.Graphics.GraphicsMode(32, 24, 0, 4), "Sharp engine");
+
+            Game game = new Game(gw, 60);
+            game.Run();
         }
     }
 }
