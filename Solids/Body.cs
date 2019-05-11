@@ -12,11 +12,14 @@ namespace SharpEngine_Core.Solids
     {
         public Face3[] Faces;
         public AHitbox Hitbox;
+        
+        public ASolid Solid { get; private set; }
 
-        public Body()
+        public Body(ASolid solid)
         {
+            this.Solid = solid;
             this.Faces = null;
-            this.Hitbox = new Hitbox(this.Faces);
+            this.Hitbox = new Hitbox(this.Faces, this.Solid);
         }
 
         public void MoveVertices(Vector3 dev)
@@ -28,7 +31,7 @@ namespace SharpEngine_Core.Solids
                     Faces[i].vertices[j] += dev;
                 }
             }
-            this.Hitbox = new Hitbox(this.Faces);
+            this.Hitbox = new Hitbox(this.Faces, this.Solid);
         }
 
         public void Render(bool debug)
