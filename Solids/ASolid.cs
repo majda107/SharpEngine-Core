@@ -6,14 +6,22 @@ using SharpEngine_Core.EntityData;
 using SharpEngine_Core.RenderData;
 using OpenTK;
 using SharpEngine_Core.PhysicsData;
+using SharpEngine_Core.EventArgsData;
 
 namespace SharpEngine_Core.Solids
 {
     abstract class ASolid : IEntity, IRenderable, IDebuggable
     {
-        public ASolid()
+        public delegate void CollisionEventHandler(object sender, CollisionEventArgs eventArgs);
+        public event CollisionEventHandler OnCollision;
+
+        public EntityManager EntityManager { get; private set; }
+        public ASolid(EntityManager entityManager)
         {
-            this.Body = new Body();
+            this.PhysicBody = new PhysicBody(this);
+            this.Body = new Body(this);
+
+            this.EntityManager = entityManager;
         }
 
         public Body Body { get; protected set; }
@@ -23,7 +31,7 @@ namespace SharpEngine_Core.Solids
         public Vector3 Pos { get => _pos; set {
                 if(value != _pos)
                 {
-                    Body.MoveVertices(value - _pos);
+                    this.Body.MoveVertices(value - _pos);
                     _pos = value;
                 }
             } }
@@ -38,6 +46,25 @@ namespace SharpEngine_Core.Solids
         public void Render()
         {
             Body.Render(this.Debug);
+        }
+
+        public bool CheckCollide(ASolid solid)
+        {
+            if ((this.Body.Hitbox.Second.X < solid.Body.Hitbox.First.X && this.Body.Hitbox.First.X > solid.Body.Hitbox.Second.X) &&
+                (this.Body.Hitbox.Second.Y > solid.Body.Hitbox.First.Y && this.Body.Hitbox.First.Y < solid.Body.Hitbox.Second.Y) &&
+                (this.Body.Hitbox.Second.Z > solid.Body.Hitbox.First.Z && this.Body.Hitbox.First.Z < solid.Body.Hitbox.Second.Z))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void FireOnCollision(CollisionEventArgs collisionEventArgs)
+        {
+            if(this.OnCollision != null)
+            {
+                this.OnCollision(this, collisionEventArgs);
+            }
         }
     }
 }
