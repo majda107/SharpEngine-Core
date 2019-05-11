@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using SharpEngine_Core.Solids;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,12 @@ namespace SharpEngine_Core.HitboxData
 {
     abstract class AHitbox
     {
+        public ASolid Parent { get; private set; }
+        public AHitbox(ASolid parent)
+        {
+            this.Parent = parent;
+        }
+
         /// <summary>
         /// Defines left - bottom - close coord of hitbox 
         /// </summary>
