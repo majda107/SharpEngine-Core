@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL;
 using SharpEngine_Core.CameraData;
 using SharpEngine_Core.EntityData;
+using SharpEngine_Core.PhysicsData;
 using SharpEngine_Core.Processors;
 using SharpEngine_Core.Solids;
 using System;
@@ -26,13 +27,23 @@ namespace SharpEngine_Core.GameLib
 
         public Game(GameWindow gameWindow, float frameRate)
         {
-            this.EntityManager = new EntityManager();
-
-            spider = ObjLoader.ObjLoader.LoadObj(@"C:\Users\majda\source\repos\SharpEngine-Core\SharpEngine-Core\TestModels\Spider\", "spider.obj", new Vector3(-80, 0, 0));
-            EntityManager.Add(spider);
-
             this.camera = new FPVCamera(new Vector3(0, 0, 0), 1f);
 
+            this.EntityManager = new EntityManager();
+
+            spider = ObjLoader.ObjLoader.LoadObj(@"C:\Users\majda\source\repos\SharpEngine-Core\SharpEngine-Core\TestModels\Spider\", "spider.obj", new Vector3(-100, 0, 0), this.EntityManager);
+            spider.PhysicBody.RigidBody = new RigidBody(10f, spider.PhysicBody);
+
+            var spider2 = ObjLoader.ObjLoader.LoadObj(@"C:\Users\majda\source\repos\SharpEngine-Core\SharpEngine-Core\TestModels\Spider\", "spider.obj", new Vector3(200, 0, 0), this.EntityManager);
+            spider2.PhysicBody.RigidBody = new RigidBody(10f, spider.PhysicBody);
+
+            spider.OnCollision += (o, e) =>
+            {
+                e.Solid.Pos += new Vector3(200, 0, 0);
+            };
+
+            EntityManager.Add(spider);
+            EntityManager.Add(spider2);
 
             this.GW = gameWindow;
             this.FrameRate = frameRate;
@@ -52,6 +63,7 @@ namespace SharpEngine_Core.GameLib
             this.GW.KeyPress += (o, e) =>
             {
                 if(e.KeyChar == 'g') spider.Debug = (spider.Debug) ? false : true;
+                if (e.KeyChar == 'o') spider.PhysicBody.AddForce(new Force(new Vector3(1, 0, 0), 1));
             };
 
             this.GW.Run(1 / this.FrameRate);
@@ -79,6 +91,7 @@ namespace SharpEngine_Core.GameLib
             this.camera.ProcessMouse(this.MouseProcessor);
             this.camera.LoadMatrix();
 
+            EntityManager.UpdateSolids();
             EntityManager.RenderVisible();
 
             GW.SwapBuffers();
