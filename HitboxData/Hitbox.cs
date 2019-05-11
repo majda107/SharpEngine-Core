@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using SharpEngine_Core.SolidData;
+using SharpEngine_Core.Solids;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace SharpEngine_Core.HitboxData
 {
     class Hitbox : AHitbox
     {
-        public Hitbox(Face3[] faces)
+        public Hitbox(Face3[] faces, ASolid parent)  : base(parent)
         {
             if(faces != null)
             {
