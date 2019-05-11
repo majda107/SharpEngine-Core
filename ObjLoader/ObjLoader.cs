@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using SharpEngine_Core.EntityData;
 using SharpEngine_Core.SolidData;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace SharpEngine_Core.ObjLoader
 {
     static class ObjLoader
     {
-        public static Solids.ASolid LoadObj(string pathToFolder, string fileName, Vector3 pos)
+        public static Solids.ASolid LoadObj(string pathToFolder, string fileName, Vector3 pos, EntityManager entityManager)
         {
             Material mat = null;
             VertexBuffer vb = new VertexBuffer();
@@ -75,7 +76,7 @@ namespace SharpEngine_Core.ObjLoader
                 }
             }
 
-            return new Solids.Solid(faces.ToArray(), pos);
+            return new Solids.Solid(faces.ToArray(), pos, entityManager);
         }
     }
 }
